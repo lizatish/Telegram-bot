@@ -1,7 +1,9 @@
 import requests
+import telegram
 from flask import request
 
 from app import app
+bot = telegram.Bot(token='1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4')
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -12,6 +14,13 @@ def hello_world():
         send_message(chat_id, get_weather())
     return 'Hello, World!'
 
+@app.route('/setwebhook', methods=['GET', 'POST'])
+def set_webhook():
+    s = bot.setWebhook('{URL}{HOOK}'.format(URL='https://api.telegram.org/bot1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4',                                        HOOK='1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4'))
+    if s:
+        return "webhook setup ok"
+    else:
+        return "webhook setup failed"
 
 def send_message(chat_id, text):
     method = "sendMessage"
