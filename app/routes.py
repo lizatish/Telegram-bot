@@ -1,26 +1,30 @@
+import os
+
 import requests
-import telegram
+import telebot
 from flask import request
 
 from app import app
-bot = telegram.Bot(token='1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4')
+
+bot = telebot.TeleBot(token='1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4')
 
 
-@app.route("/", methods=["GET", "POST"])
-def hello_world():
-    if request.method == "POST":
-        chat_id = request.json["message"]["chat"]["id"]
-        send_message(chat_id, f'Hello,  {request.json["message"]["from"]["first_name"]}!')
-        send_message(chat_id, get_weather())
-    return 'Hello, World!'
+# @app.route("/", methods=["GET", "POST"])
+# def hello_world():
+#     if request.method == "POST":
+#         chat_id = request.json["message"]["chat"]["id"]
+#         send_message(chat_id, f'Hello,  {request.json["message"]["from"]["first_name"]}!')
+#         send_message(chat_id, get_weather())
+#     return 'Hello, World!'
 
-@app.route('/setwebhook', methods=['GET', 'POST'])
-def set_webhook():
-    s = bot.setWebhook('{URL}{HOOK}'.format(URL='https://api.telegram.org/bot1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4',                                        HOOK='1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4'))
-    if s:
-        return "webhook setup ok"
-    else:
-        return "webhook setup failed"
+
+@app.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(
+        url="https://lizatish-telegram-bot.herokuapp.com/")  # этот url нужно заменить на url вашего Хероку приложения
+    return "?", 200
+
 
 def send_message(chat_id, text):
     method = "sendMessage"
@@ -28,6 +32,12 @@ def send_message(chat_id, text):
     url = f"https://api.telegram.org/bot{token}/{method}"
     data = {"chat_id": chat_id, "text": text}
     requests.post(url, data=data)
+
+
+@app.route("/bot", methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
 
 
 def get_weather():
