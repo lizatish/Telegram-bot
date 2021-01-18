@@ -1,14 +1,19 @@
-import os
-
 import requests
 import telebot
 from flask import request
 
 from app import app
 
-bot = telebot.TeleBot(token='1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4')
+TOKEN = '1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4'
+bot = telebot.TeleBot(token=TOKEN)
 
 
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
+
+
+#
 # @app.route("/", methods=["GET", "POST"])
 # def hello_world():
 #     if request.method == "POST":
@@ -21,9 +26,13 @@ bot = telebot.TeleBot(token='1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4')
 @app.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(
-        url="https://lizatish-telegram-bot.herokuapp.com/")  # этот url нужно заменить на url вашего Хероку приложения
-    return "?", 200
+    bot.set_webhook(url='https://lizatish-telegram-bot.herokuapp.com/' + TOKEN)
+    return "!", 200
+
+
+@bot.message_handler(func=lambda message: True, content_types=['text'])
+def echo_message(message):
+    bot.reply_to(message, message.text)
 
 
 def send_message(chat_id, text):
