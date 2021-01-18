@@ -13,14 +13,10 @@ def start(message):
     bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
 
 
-#
-# @app.route("/", methods=["GET", "POST"])
-# def hello_world():
-#     if request.method == "POST":
-#         chat_id = request.json["message"]["chat"]["id"]
-#         send_message(chat_id, f'Hello,  {request.json["message"]["from"]["first_name"]}!')
-#         send_message(chat_id, get_weather())
-#     return 'Hello, World!'
+@app.route('/' + TOKEN, methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
 
 
 @app.route("/")
@@ -37,16 +33,9 @@ def echo_message(message):
 
 def send_message(chat_id, text):
     method = "sendMessage"
-    token = "1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4"
-    url = f"https://api.telegram.org/bot{token}/{method}"
+    url = f"https://api.telegram.org/bot{TOKEN}/{method}"
     data = {"chat_id": chat_id, "text": text}
     requests.post(url, data=data)
-
-
-@app.route("/bot", methods=['POST'])
-def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "!", 200
 
 
 def get_weather():
@@ -57,3 +46,12 @@ def get_weather():
         return f"Сейчас в Рязани {api_response['current']['temperature']} градусов"
     else:
         return "Такой город не найден"
+
+#
+# @app.route("/", methods=["GET", "POST"])
+# def hello_world():
+#     if request.method == "POST":
+#         chat_id = request.json["message"]["chat"]["id"]
+#         send_message(chat_id, f'Hello,  {request.json["message"]["from"]["first_name"]}!')
+#         send_message(chat_id, get_weather())
+#     return 'Hello, World!'
