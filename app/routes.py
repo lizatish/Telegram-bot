@@ -32,10 +32,18 @@ def echo_message(message):
 
     user = User.query.filter_by(id=message.chat.id).first()
     if user is None:
+        bot.reply_to(message, 1)
+
         user = User(id=message.chat.id, first_name=message.from_user.first_name,
                     last_name=message.from_user.first_name)
+        bot.reply_to(message, 2)
+
         db.session.add(user)
+        bot.reply_to(message, 3)
+
         db.session.commit()
+
+        bot.reply_to(message, 4)
 
         bot.reply_to(message, 'Вы зарегистрированы!')
     else:
