@@ -11,8 +11,10 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
 
 
 class ProductionConfig(Config):

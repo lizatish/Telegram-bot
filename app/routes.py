@@ -1,19 +1,20 @@
 import requests
-import telebot
-from flask import request
+from flask import request, session
 
-from app import app
-
-TOKEN = '1439238476:AAFuJ4R1nkDyLDPMpDNPwK2HLQhrPTQ65d4'
-bot = telebot.TeleBot(token=TOKEN)
+from app import app, bot
+from app.models import User
 
 
 @bot.message_handler(commands=['start'])
 def start(message):
+
+    if not session.query(User).filter(message.from_user.chat.id).one():
+        bot.reply_to(message, 'Вы новенький!')
+
     bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
 
 
-@app.route('/' + TOKEN, methods=['POST'])
+@app.route('/' + app.config['TELEGRAM_TOKEN'], methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
     return "!", 200
@@ -22,20 +23,13 @@ def getMessage():
 @app.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url='https://lizatish-telegram-bot.herokuapp.com/' + TOKEN)
+    bot.set_webhook(url='https://lizatish-telegram-bot.herokuapp.com/' + app.config['TELEGRAM_TOKEN'])
     return "!", 200
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
     bot.reply_to(message, message.text)
-
-
-def send_message(chat_id, text):
-    method = "sendMessage"
-    url = f"https://api.telegram.org/bot{TOKEN}/{method}"
-    data = {"chat_id": chat_id, "text": text}
-    requests.post(url, data=data)
 
 
 def get_weather():
@@ -46,12 +40,3 @@ def get_weather():
         return f"Сейчас в Рязани {api_response['current']['temperature']} градусов"
     else:
         return "Такой город не найден"
-
-#
-# @app.route("/", methods=["GET", "POST"])
-# def hello_world():
-#     if request.method == "POST":
-#         chat_id = request.json["message"]["chat"]["id"]
-#         send_message(chat_id, f'Hello,  {request.json["message"]["from"]["first_name"]}!')
-#         send_message(chat_id, get_weather())
-#     return 'Hello, World!'
