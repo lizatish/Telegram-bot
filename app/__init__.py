@@ -5,15 +5,15 @@ from flask_sqlalchemy import SQLAlchemy
 
 from config import Config
 
-migrate = Migrate()
 
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # app.config.from_object(config_class)
 #  TODO: добавить фабрику
-migrate.init_app(app, db)
+# migrate.init_app(app, db)
 with app.app_context():
     db.create_all()
 bot = telebot.TeleBot(token=app.config['TELEGRAM_TOKEN'])
