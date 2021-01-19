@@ -28,11 +28,12 @@ def webhook():
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
+    bot.reply_to(message.chat.id, 'hey')
+
     user = User.query.filter_by(id=message.chat.id).first()
     if user is None:
         user = User(id=message.chat.id, first_name=message.from_user.first_name,
                     last_name=message.from_user.first_name)
-        print(user)
         db.session.add(user)
         db.session.commit()
 
