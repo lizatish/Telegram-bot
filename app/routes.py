@@ -8,7 +8,7 @@ from app.models import User
 @bot.message_handler(commands=['start'])
 def start(message):
 
-    if not session.query(User).filter(message.from_user.chat.id).one():
+    if not User.query.get(message.from_user.chat.id).first():
         bot.reply_to(message, 'Вы новенький!')
 
     bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
