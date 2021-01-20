@@ -1,1 +1,1 @@
-web: gunicorn telegram_bot:app
+web: flask db upgrade; gunicorn telegram_bot:app
