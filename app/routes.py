@@ -20,8 +20,8 @@ def getMessage():
 @app.route("/")
 def webhook():
     bot.remove_webhook()
-    # bot.set_webhook(url='https://lizatish-telegram-bot.herokuapp.com/' + app.config['TELEGRAM_TOKEN'])
-    bot.set_webhook(url='https://7308fa93b393.ngrok.io/' + app.config['TELEGRAM_TOKEN'])
+    bot.set_webhook(url='https://lizatish-telegram-bot.herokuapp.com/' + app.config['TELEGRAM_TOKEN'])
+    # bot.set_webhook(url='https://7308fa93b393.ngrok.io/' + app.config['TELEGRAM_TOKEN'])
 
     return "!", 200
 
