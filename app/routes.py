@@ -20,34 +20,26 @@ def getMessage():
 @app.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url='https://lizatish-telegram-bot.herokuapp.com/' + app.config['TELEGRAM_TOKEN'])
-    # bot.set_webhook(url='https://28129676d70d.ngrok.io/' + app.config['TELEGRAM_TOKEN'])
+    # bot.set_webhook(url='https://lizatish-telegram-bot.herokuapp.com/' + app.config['TELEGRAM_TOKEN'])
+    bot.set_webhook(url='https://7308fa93b393.ngrok.io/' + app.config['TELEGRAM_TOKEN'])
 
     return "!", 200
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
-    bot.reply_to(message, message.chat.id)
-
     user = User.query.filter_by(id=message.chat.id).first()
     if user is None:
-        bot.reply_to(message, 1)
-
         user = User(id=message.chat.id, first_name=message.from_user.first_name,
-                    last_name=message.from_user.first_name)
-        bot.reply_to(message, 2)
+                    last_name=message.from_user.last_name)
 
         db.session.add(user)
-        bot.reply_to(message, 3)
-
         db.session.commit()
-
-        bot.reply_to(message, 4)
-
         bot.reply_to(message, 'Вы зарегистрированы!')
     else:
         bot.reply_to(message, f'Всего пользователей {User.query.count()}')
+        for user in User.query.all():
+            bot.reply_to(message, f'{user.first_name} {user.last_name}')
 
 
 def get_weather():
